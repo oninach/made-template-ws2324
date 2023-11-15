@@ -52,5 +52,5 @@ class CSVLoader:
         connection.close()
 
 if __name__ == "__main__":
-    loader = CSVLoader('sqlite:///airports.sqlite', 'airports', 'data/rhein-kreis-neuss-flughafen-weltweit.csv')
+    loader = CSVLoader('sqlite:///airports.sqlite', 'airports', 'rhein-kreis-neuss-flughafen-weltweit.csv')
     loader.load_data()
