@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Table, Column, INTEGER, TEXT, MetaData, FLOAT
 import pandas as pd
+import numpy as np
 
 class CSVLoader:
     def __init__(self, database_url, table_name, csv_url):
@@ -32,24 +33,12 @@ class CSVLoader:
         ])
 
         try:
-            # Fetch data directly from the URL
+            # Fetch data directly from the URL using pandas
             csv_data = pd.read_csv(self.csv_url, delimiter=';')
-            for _, row in csv_data.iterrows():
-                connection.execute(table.insert().values(
-                    column_1=row['column_1'],
-                    column_2=row['column_2'],
-                    column_3=row['column_3'],
-                    column_4=row['column_4'],
-                    column_5=row['column_5'],
-                    column_6=row['column_6'],
-                    column_7=row['column_7'],
-                    column_8=row['column_8'],
-                    column_9=row['column_9'],
-                    column_10=row['column_10'],
-                    column_11=row['column_11'],
-                    column_12=row['column_12'],
-                    geo_punkt=row['geo_punkt']
-                ))
+
+            # Use to_sql for bulk insert
+            csv_data.to_sql(self.table_name, connection, if_exists='replace', index=False, method='multi')
+
             print("Data loaded successfully.")
         except Exception as e:
             print(f"Error loading data: {e}")
