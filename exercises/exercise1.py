@@ -1,11 +1,12 @@
 from sqlalchemy import create_engine, Table, Column, INTEGER, TEXT, MetaData, FLOAT
+import pandas as pd
 
 class CSVLoader:
-    def __init__(self, database_url, table_name, csv_file):
+    def __init__(self, database_url, table_name, csv_url):
         self.engine = create_engine(database_url, echo=True)
         self.metadata = MetaData()
         self.table_name = table_name
-        self.csv_file = csv_file
+        self.csv_url = csv_url
 
     def create_table(self, columns):
         table = Table(self.table_name, self.metadata, *columns)
@@ -30,27 +31,31 @@ class CSVLoader:
             Column('geo_punkt', TEXT)
         ])
 
-        with open(self.csv_file, 'r') as file:
-            file.readline()
-            for line in file:
-                row = line.strip().split(';')
-                connection.execute(table.insert().values(        
-                    column_1=row[0],
-                    column_2=row[1],
-                    column_3=row[2],
-                    column_4=row[3],
-                    column_5=row[4],
-                    column_6=row[5],
-                    column_7=row[6],
-                    column_8=row[7],
-                    column_9=row[8],
-                    column_10=row[9],
-                    column_11=row[10],
-                    column_12=row[11],
-                    geo_punkt=row[12]
-                    ))
-        connection.close()
+        try:
+            # Fetch data directly from the URL
+            csv_data = pd.read_csv(self.csv_url, delimiter=';')
+            for _, row in csv_data.iterrows():
+                connection.execute(table.insert().values(
+                    column_1=row['column_1'],
+                    column_2=row['column_2'],
+                    column_3=row['column_3'],
+                    column_4=row['column_4'],
+                    column_5=row['column_5'],
+                    column_6=row['column_6'],
+                    column_7=row['column_7'],
+                    column_8=row['column_8'],
+                    column_9=row['column_9'],
+                    column_10=row['column_10'],
+                    column_11=row['column_11'],
+                    column_12=row['column_12'],
+                    geo_punkt=row['geo_punkt']
+                ))
+            print("Data loaded successfully.")
+        except Exception as e:
+            print(f"Error loading data: {e}")
+        finally:
+            connection.close()
 
 if __name__ == "__main__":
-    loader = CSVLoader('sqlite:///airports.sqlite', 'airports', 'rhein-kreis-neuss-flughafen-weltweit.csv')
+    loader = CSVLoader('sqlite:///airports.sqlite', 'airports', 'https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/rhein-kreis-neuss-flughafen-weltweit/exports/csv')
     loader.load_data()
