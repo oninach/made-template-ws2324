@@ -79,7 +79,7 @@ pipeline TrainStopsPipeline {
     block TrainStopsTableInterpreter oftype TableInterpreter {
         header: true;
         columns: [
-            "EVA_NR" oftype text,
+            "EVA_NR" oftype integer,
             "DS100" oftype text,
             "IFOPT" oftype IfoptFormat,
             "NAME" oftype text,
