@@ -17,7 +17,7 @@ class CSVLoader:
         connection = self.engine.connect()
         table = self.create_table([
             Column('date', TEXT),
-            Column('CIN', INTEGER),
+            Column('CIN', TEXT),
             Column('name', TEXT),
             Column('petrol', FLOAT),
             Column('diesel', FLOAT),
