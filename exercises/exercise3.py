@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, Table, Column, INTEGER, TEXT, MetaData, FLOAT
 import pandas as pd
-import numpy as np
 
 class CSVLoader:
     def __init__(self, database_url, table_name, csv_url):
@@ -34,8 +33,12 @@ class CSVLoader:
             data = pd.read_csv(self.csv_url, sep = ';',encoding='ISO-8859-15',engine = 'python',skiprows=7, nrows=475,header=None)
             mapping={0:'date', 1:'CIN',2:'name',12:'petrol', 22:'diesel', 32:'gas',42:'electro',52:'hybrid',62:'plugInHybrid',72:'others'}
             df = data[list(mapping.keys())].rename(columns=mapping)
+            
+            
+            df['CIN'] = df['CIN'].astype(str)
+
             # Keep rows where 'CIN' is a string with 5 characters
-            df = df[df['CIN'].astype(str).str.match(r'^\d{5}$')]
+            df = df[df['CIN'].astype(str).match(r'^\d{5}$')]
             
             
             columns_to_check = ['petrol', 'diesel', 'gas', 'electro', 'hybrid', 'plugInHybrid', 'others']
