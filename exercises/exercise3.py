@@ -38,7 +38,10 @@ class CSVLoader:
             df['CIN'] = df['CIN'].astype(str)
 
             # Keep rows where 'CIN' is a string with 5 characters
-            df = df[df['CIN'].astype(str).match(r'^\d{5}$')]
+            # df = df[df['CIN'].astype(str).match(r'^\d{5}$')]
+            cin_mask = (df['CIN'].apply(lambda x: len(x) == 5 and x.isdigit()))
+            # Apply the mask to filter rows
+            df = df[cin_mask]
             
             
             columns_to_check = ['petrol', 'diesel', 'gas', 'electro', 'hybrid', 'plugInHybrid', 'others']
